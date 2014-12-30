@@ -5,6 +5,7 @@ module.exports = function( dtseConfig ) {
   return function(req, res, next) {
 
   	var url = req.url;
+  	console.log("REQ " + url);
 
   	switch( url ) {
   		case "/ping":
