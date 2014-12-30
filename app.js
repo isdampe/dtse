@@ -6,6 +6,8 @@ var dtseConfig = {
 	serverPort: 3000,
 	serverIpSSL: "127.0.0.1",
 	serverPortSSL: 443,
+	serverUri: "localhost",
+	serverEmail: "isdampe[at]gmail",
 	timers: {
 		ping: 10000,
 		pull: 30000,
@@ -15,7 +17,7 @@ var dtseConfig = {
 
 var dtseKnownServers = [
 	{
-		uri: "remotehost",
+		uri: "http://remotehost",
 		port: 3000
 	}
 ];
@@ -36,4 +38,4 @@ http.createServer(app).listen(dtseConfig.serverPort);
 //https.createServer(options, app).listen(dtseConfig.serverPortSSL);
 
 //Start the requests process.
-sync.init(dtseConfig, dtseKnownServers, request);
+sync.init(dtseConfig, dtseKnownServers);

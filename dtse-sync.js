@@ -14,27 +14,59 @@ exports.init = function(dtseConfig, dtseKnownServers) {
 	
 	//Begin set interval timers.
 	syncTimers.ping = setInterval(function(){
-		sync.ping();
+		sync.ping(dtseConfig, dtseKnownServers);
 	}, dtseConfig.timers.ping);
 
 	syncTimers.pull = setInterval(function(){
-		sync.pull();
+		sync.pull(dtseConfig, dtseKnownServers);
 	}, dtseConfig.timers.pull);
 
 	syncTimers.push = setInterval(function(){
-		sync.push();
+		sync.push(dtseConfig, dtseKnownServers);
 	}, dtseConfig.timers.push);
 
 };
 
-exports.ping = function() {
-	console.log("Ping");
+/* Attempts to ping all known servers. */
+exports.ping = function(dtseConfig, dtseKnownServers) {
+	
+	var sync = this;
+	var max = dtseKnownServers.length;
+
+	//Loop through each server and initiate a ping request.
+	for ( var i=0; i<max; i++ ) {
+		sync.sendPingRequest( dtseKnownServers[i], dtseConfig );
+	}
+
 };
 
-exports.pull = function() {
+exports.pull = function(dtseConfig, dtseKnownServers) {
 	console.log("Pull");
 };
 
-exports.push = function() {
+exports.push = function(dtseConfig, dtseKnownServers) {
 	console.log("Push");
+};
+
+exports.sendPingRequest = function(server, dtseConfig) {
+
+	var pingCode = Math.floor(Math.random() * (1000000 - 1000) + 1000);
+	var requestUri = server.uri + "/ping";
+	var requestData = JSON.stringify({
+		ping: pingCode,
+		uri: dtseConfig.serverUri
+	});
+
+	console.log("Ping " + pingCode + " to " + server.uri + ":" + server.port);
+
+	request.post({url: requestUri, formData: requestData}, function(err, httpResponse, body) {
+  	if (err) {
+  		console.log("Ping error on " + requestUri + ": " + err);
+  		return;
+  	} else {
+  		//Success, check the ping code reply...
+  		console.log("Packet sent.");
+  	}
+	});
+
 };
