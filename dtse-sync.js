@@ -51,15 +51,15 @@ exports.push = function(dtseConfig, dtseKnownServers) {
 exports.sendPingRequest = function(server, dtseConfig) {
 
 	var pingCode = Math.floor(Math.random() * (1000000 - 1000) + 1000);
-	var requestUri = server.uri + "/ping";
+	var requestUri = server.uri + ":" + server.port + "/ping";
 	var requestData = JSON.stringify({
 		ping: pingCode,
 		uri: dtseConfig.serverUri
 	});
 
-	console.log("Ping " + pingCode + " to " + server.uri + ":" + server.port);
+	console.log("Ping " + pingCode + " to " + requestUri);
 
-	request.post({url: requestUri, formData: requestData}, function(err, httpResponse, body) {
+	request.post(requestUri, form({json:requestData}), function(err, httpResponse, body) {
   	if (err) {
   		console.log("Ping error on " + requestUri + ": " + err);
   		return;
