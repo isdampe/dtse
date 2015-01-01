@@ -53,19 +53,21 @@ exports.sendPingRequest = function(server, dtseConfig) {
 	var pingCode = Math.floor(Math.random() * (1000000 - 1000) + 1000);
 	var requestUri = server.uri + ":" + server.port + "/ping";
 	var requestData = JSON.stringify({
-		ping: pingCode,
-		uri: dtseConfig.serverUri
+		p: pingCode,
+		u: dtseConfig.serverUri
 	});
 
 	console.log("Ping " + pingCode + " to " + requestUri);
+	console.log(requestData);
 
-	request.post(requestUri, { form: { json: requestData } }, function(err, httpResponse, body) {
+	request.post(requestUri, { j: requestData }, function(err, httpResponse, body) {
   	if (err) {
   		console.log("Ping error on " + requestUri + ": " + err);
   		return;
   	} else {
   		//Success, check the ping code reply...
-  		console.log("Packet sent.");
+  		var data = JSON.parse(body);
+  		console.log(data);
   	}
 	});
 

@@ -1,27 +1,60 @@
 "use strict";
 
-module.exports = function( dtseConfig ) {
+var log = require("./log.js");
 
-  return function(req, res, next) {
+exports.process = function(req,res) {
 
-  	var url = req.url;
-  	console.log("REQ " + url);
+  //Get the request.
+  var request = req.url;
 
-  	switch( url ) {
-  		case "/ping":
-  			dtsePingReply(req,res);
-  		break;
-  	}
+  switch( request ) {
+    case "/ping":
+      doPingReply(req,res);
+    break;
+  }
 
-		next();
-
-	}
-    
 };
 
-function dtsePingReply(req,res) {
+function doPingReply(req,res) {
 
-	//Ensure we have the correct ping data.
-	console.log(req);
+  var j = req.param("j");
+  if ( typeof j ==="undefined" ) {
+    log.print("Malformed ping packet. Missing ping data.");
+    doSyntaxErrorReply("-1", res);
+    return;
+  }
+
+  try {
+    var json = JSON.parse(j);
+  } catch (err) {
+    log.print("Malformed ping packet, invalid json " + err);
+    doSyntaxErrorReply("-2", res);
+    return;
+  }
+
+  if ( typeof json.p === "undefined" || typeof json.u === "undefined" ) {
+    log.print("Malformed ping packet, json missing structure");
+    doSyntaxErrorReply("-3", res);
+    return;
+  }
+
+  var requestData = JSON.stringify({
+    p: json.p,
+    u: json.u
+  });
+
+  log.print("Pong " + json.p + " to " + json.u);
+  res.end(requestData);
+  return true;
+
+};
+
+function doSyntaxErrorReply(code,res) {
+
+  var requestData = JSON.stringify({
+    e: code
+  });
+
+  res.end(requestData);
 
 }

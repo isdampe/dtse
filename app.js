@@ -28,10 +28,13 @@ var sync = require("./dtse-sync.js");
 var express = require("express");
 var https = require("https");
 var http = require("http");
+var bodyParser = require('body-parser');
 var app = express();
 
-//Allow dtse middleware for answering requests.
-app.use( dtse(dtseConfig) );
+//Allow post recognition.
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 //Set up the servers.
 http.createServer(app).listen(dtseConfig.serverPort);
@@ -39,3 +42,9 @@ http.createServer(app).listen(dtseConfig.serverPort);
 
 //Start the requests process.
 sync.init(dtseConfig, dtseKnownServers);
+
+app.post("/*", function(req,res){
+
+	dtse.process(req,res);
+
+});
