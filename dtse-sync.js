@@ -65,6 +65,10 @@ exports.sendPingRequest = function(server, dtseConfig) {
   		log.print("Ping error on " + requestUri + ": " + err);
   		return;
   	} else {
+
+  		//Check if request made it.
+  		log.print("STAT " + httpResponse.statusCode);
+
   		//Success, check the ping code reply...
   		var data = JSON.parse(body);
   		
