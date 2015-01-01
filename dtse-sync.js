@@ -1,6 +1,7 @@
 "use strict";
 
 var request = require("request");
+var log = require("./log.js");
 
 var syncTimers = {
 	ping: null,
@@ -41,11 +42,11 @@ exports.ping = function(dtseConfig, dtseKnownServers) {
 };
 
 exports.pull = function(dtseConfig, dtseKnownServers) {
-	console.log("Pull");
+	log.print("Pull");
 };
 
 exports.push = function(dtseConfig, dtseKnownServers) {
-	console.log("Push");
+	log.print("Push");
 };
 
 exports.sendPingRequest = function(server, dtseConfig) {
@@ -57,17 +58,28 @@ exports.sendPingRequest = function(server, dtseConfig) {
 		u: dtseConfig.serverUri
 	});
 
-	console.log("Ping " + pingCode + " to " + requestUri);
-	console.log(requestData);
+	log.print("Ping " + pingCode + " to " + requestUri);
 
 	request.post(requestUri, { form: { j: requestData } }, function(err, httpResponse, body) {
   	if (err) {
-  		console.log("Ping error on " + requestUri + ": " + err);
+  		log.print("Ping error on " + requestUri + ": " + err);
   		return;
   	} else {
   		//Success, check the ping code reply...
   		var data = JSON.parse(body);
-  		console.log(data);
+  		
+  		if ( typeof data.p === "undefined" || typeof data.u === "undefined" ) {
+  			log.print("Invalid pong packet, corrupt data?");
+  			return;
+  		}
+
+  		if ( pingCode === data.p && dtseConfig.serverUri === data.u ) {
+  			log.print("Pong " + data.p + " from " + requestUri);
+  			return;
+  		} else {
+  			log.print("WARN: Invalid pong packet, mismatches. Possible MITM attack?");
+  		}
+
   	}
 	});
 
