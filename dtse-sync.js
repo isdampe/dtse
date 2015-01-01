@@ -60,7 +60,7 @@ exports.sendPingRequest = function(server, dtseConfig) {
 	console.log("Ping " + pingCode + " to " + requestUri);
 	console.log(requestData);
 
-	request.post(requestUri, { j: requestData }, function(err, httpResponse, body) {
+	request.post(requestUri, { form: { j: requestData } }, function(err, httpResponse, body) {
   	if (err) {
   		console.log("Ping error on " + requestUri + ": " + err);
   		return;

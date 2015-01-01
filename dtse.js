@@ -18,6 +18,9 @@ exports.process = function(req,res) {
 function doPingReply(req,res) {
 
   var j = req.param("j");
+
+  log.print(j);
+
   if ( typeof j ==="undefined" ) {
     log.print("Malformed ping packet. Missing ping data.");
     doSyntaxErrorReply("-1", res);
