@@ -18,7 +18,8 @@ var dtseConfig = {
 var dtseKnownServers = [
 	{
 		uri: "http://remotehost",
-		port: 3000
+		port: 3000,
+		status: 1
 	}
 ];
 
