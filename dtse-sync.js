@@ -60,14 +60,21 @@ exports.sendPingRequest = function(server, dtseConfig) {
 
 	log.print("Ping " + pingCode + " to " + requestUri);
 
-	request.post(requestUri, { form: { j: requestData } }, function(err, httpResponse, body) {
+	request.post( { 
+			url: requestUri,
+			timeout: 10000,
+			form: {
+				j: requestData
+			}
+		}, function(err, httpResponse, body) {
   	if (err) {
+  		//Usually a timeout.
   		log.print("Ping error on " + requestUri + ": " + err);
+
+  		//Do stuff here.
+
   		return;
   	} else {
-
-  		//Check if request made it.
-  		log.print("STAT " + httpResponse.statusCode);
 
   		//Success, check the ping code reply...
   		var data = JSON.parse(body);
